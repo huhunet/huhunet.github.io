@@ -2,9 +2,9 @@
 <html>
 <head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="utf-8">
-  <title>爱吃苹果的猫</title>
-  <meta name="keywords" content>
-  <meta name="description" content="爱吃苹果的猫">
+  <title>springboot-定时任务 | 爱吃苹果的猫</title>
+  <meta name="keywords" content=" springboot ">
+  <meta name="description" content="springboot-定时任务 | 爱吃苹果的猫">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="description" content="java.lang.OutOfMemoryError: Java heap space  java.lang.OutOfMemoryError: PermGen space  java.lang.OutOfMemoryError: Metaspace   java.lang.OutOfMemoryError，是指程序在申请内存时，没有足够的内存空间供其使用，出现OutOfMemoryError">
 <meta name="keywords" content="java">
@@ -53,7 +53,7 @@
 </div>
 
 <body>
-<aside class="nav mobile">
+<aside class="nav">
     <div class="nav-left">
         <a href="/" class="avatar_target">
     <img class="avatar" src="/img/miao.ico" />
@@ -262,12 +262,51 @@
         </div>
     </div>
 </aside>
-<div class="post index">
+<div class="post">
     <div class="pjax">
-        <article class="index">
-            <div class="toc-ref">
+        <article id="post-springboot-定时任务" class="article article-type-post" itemscope itemprop="blogPost">
     
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#给从不写博客的一个人"><span class="toc-text">给从不写博客的一个人</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么突然要写博客"><span class="toc-text">为什么突然要写博客</span></a></li></ol></li></ol>
+        <h1 class="article-title">springboot-定时任务</h1>
+    
+    <div class="article-meta">
+        
+        
+        
+        
+        <span class="tag">
+            
+            <a href="javascript:" class="color1">springboot</a>
+            
+        </span>
+        
+    </div>
+    <div class="article-meta">
+        
+        创建时间:<time class="date" title='更新时间: 2019-08-22 13:20:07'>2019-08-21 15:35</time>
+        
+    </div>
+    <div class="article-meta">
+        
+        <span>字数:228</span>
+        
+        
+        <span id="busuanzi_container_page_pv">
+            阅读:<span id="busuanzi_value_page_pv">
+                <span class="count-comment">
+                    <span class="spinner">
+                      <div class="cube1"></div>
+                      <div class="cube2"></div>
+                    </span>
+                </span>
+            </span>
+        </span>
+        
+        
+    </div>
+    
+    <div class="toc-ref">
+    
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Scheduling-Tasks"><span class="toc-text">Scheduling Tasks</span></a></li></ol>
     
 <style>
     .left-col .switch-btn,
@@ -280,15 +319,56 @@
     }
 </style>
 </div>
-            <h1 id="给从不写博客的一个人"><a href="#给从不写博客的一个人" class="headerlink" title="给从不写博客的一个人"></a>给从不写博客的一个人</h1><h2 id="为什么突然要写博客"><a href="#为什么突然要写博客" class="headerlink" title="为什么突然要写博客"></a>为什么突然要写博客</h2><p>一晃眼，人生已经走完了青年的大半，最美好的时光业已逝去，清晨在梦中已经开始回忆过往了…….</p>
-<p>小学时，4号路两旁，一排排粗壮的老树，夏天总是会住着好些知了，等着我晚上去抓他们；上了初中，进了县城，每天中午没时间回家，就骑着单车，在县城各个街道上溜达，见识不同的人，不同的物；自然而然考上了高中，不知道是我长大了，还是同学们都长大了，忽然发现每个同学都是那么有自己鲜明的性格，世界的色彩变得多了些，生动了些；大学时，我就是情商发育很晚的那一类人，不懂谈情说爱，转眼就硕士毕业了，工作了，离职了，买了房子….</p>
-<p>可是，回忆越来越少，少得有点无助，有点害怕，只有不经意间才能想起那些人暗些事情……只怕，可能以后再也回忆不起来那些人，那些事了….</p>
-<p>到目前为止已经写了<code class="article_number"></code>篇文章， 共<code class="site_word_count"></code>字。</p>
-<p>本站访问人数：<code class="site_uv"></code>人次 ， 访问量：<code class="site_pv"></code>次</p>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="Scheduling-Tasks"><a href="#Scheduling-Tasks" class="headerlink" title="Scheduling Tasks"></a>Scheduling Tasks</h3><p>1、metadata</p>
+<p>@Scheduled 用于注释周期性执行的任务</p>
+<ul>
+<li>该每次调用完成后，延迟5s调用一次</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@Scheduled(fixedDelay=5000)</span><br><span class="line">public void doSomething() &#123;</span><br><span class="line">    // something that should execute periodically</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-        </article>
-        
-        
+<ul>
+<li>每5秒调用一次</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@Scheduled(fixedRate=5000)</span><br><span class="line">public void doSomething() &#123;</span><br><span class="line">    // something that should execute periodically</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>首次调用延迟1s，每5秒调用一次</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@Scheduled(initialDelay=1000, fixedRate=5000)</span><br><span class="line">public void doSomething() &#123;</span><br><span class="line">    // something that should execute periodically</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>以固定周期调用，cron为定时任务，周一至周五，每天5点</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@Scheduled(cron=&quot;*/5 * * * * MON-FRI&quot;)</span><br><span class="line">public void doSomething() &#123;</span><br><span class="line">    // something that should execute on weekdays only</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>2、用法</p>
+<ul>
+<li>在方法上加入注解</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ScheduledTasks</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger log = LoggerFactory.getLogger(ScheduledTasks.class);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> SimpleDateFormat dateFormat = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"HH:mm:ss"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Scheduled</span>(fixedRate = <span class="number">5000</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">reportCurrentTime</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        log.info(<span class="string">"The time is now &#123;&#125;"</span>, dateFormat.format(<span class="keyword">new</span> Date()));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在主程序中加入注解，启用定时任务</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableScheduling</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Application</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(Application.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+       
+    </div>
+</article>
+
+
+
+
+
+
+
+    
+
+
+
+
     </div>
     <div class="copyright">
         

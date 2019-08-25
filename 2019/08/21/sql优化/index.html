@@ -2,9 +2,9 @@
 <html>
 <head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="utf-8">
-  <title>爱吃苹果的猫</title>
+  <title>sql优化 | 爱吃苹果的猫</title>
   <meta name="keywords" content>
-  <meta name="description" content="爱吃苹果的猫">
+  <meta name="description" content="sql优化 | 爱吃苹果的猫">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="description" content="java.lang.OutOfMemoryError: Java heap space  java.lang.OutOfMemoryError: PermGen space  java.lang.OutOfMemoryError: Metaspace   java.lang.OutOfMemoryError，是指程序在申请内存时，没有足够的内存空间供其使用，出现OutOfMemoryError">
 <meta name="keywords" content="java">
@@ -53,7 +53,7 @@
 </div>
 
 <body>
-<aside class="nav mobile">
+<aside class="nav">
     <div class="nav-left">
         <a href="/" class="avatar_target">
     <img class="avatar" src="/img/miao.ico" />
@@ -262,12 +262,45 @@
         </div>
     </div>
 </aside>
-<div class="post index">
+<div class="post">
     <div class="pjax">
-        <article class="index">
-            <div class="toc-ref">
+        <article id="post-sql优化" class="article article-type-post" itemscope itemprop="blogPost">
     
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#给从不写博客的一个人"><span class="toc-text">给从不写博客的一个人</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么突然要写博客"><span class="toc-text">为什么突然要写博客</span></a></li></ol></li></ol>
+        <h1 class="article-title">sql优化</h1>
+    
+    <div class="article-meta">
+        
+        
+        
+        
+    </div>
+    <div class="article-meta">
+        
+        创建时间:<time class="date" title='更新时间: 2019-08-21 14:05:33'>2019-08-21 14:03</time>
+        
+    </div>
+    <div class="article-meta">
+        
+        <span>字数:1.7k</span>
+        
+        
+        <span id="busuanzi_container_page_pv">
+            阅读:<span id="busuanzi_value_page_pv">
+                <span class="count-comment">
+                    <span class="spinner">
+                      <div class="cube1"></div>
+                      <div class="cube2"></div>
+                    </span>
+                </span>
+            </span>
+        </span>
+        
+        
+    </div>
+    
+    <div class="toc-ref">
+    
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、sql表设计"><span class="toc-text">1、sql表设计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、sql表优化"><span class="toc-text">2、sql表优化</span></a></li></ol>
     
 <style>
     .left-col .switch-btn,
@@ -280,15 +313,90 @@
     }
 </style>
 </div>
-            <h1 id="给从不写博客的一个人"><a href="#给从不写博客的一个人" class="headerlink" title="给从不写博客的一个人"></a>给从不写博客的一个人</h1><h2 id="为什么突然要写博客"><a href="#为什么突然要写博客" class="headerlink" title="为什么突然要写博客"></a>为什么突然要写博客</h2><p>一晃眼，人生已经走完了青年的大半，最美好的时光业已逝去，清晨在梦中已经开始回忆过往了…….</p>
-<p>小学时，4号路两旁，一排排粗壮的老树，夏天总是会住着好些知了，等着我晚上去抓他们；上了初中，进了县城，每天中午没时间回家，就骑着单车，在县城各个街道上溜达，见识不同的人，不同的物；自然而然考上了高中，不知道是我长大了，还是同学们都长大了，忽然发现每个同学都是那么有自己鲜明的性格，世界的色彩变得多了些，生动了些；大学时，我就是情商发育很晚的那一类人，不懂谈情说爱，转眼就硕士毕业了，工作了，离职了，买了房子….</p>
-<p>可是，回忆越来越少，少得有点无助，有点害怕，只有不经意间才能想起那些人暗些事情……只怕，可能以后再也回忆不起来那些人，那些事了….</p>
-<p>到目前为止已经写了<code class="article_number"></code>篇文章， 共<code class="site_word_count"></code>字。</p>
-<p>本站访问人数：<code class="site_uv"></code>人次 ， 访问量：<code class="site_pv"></code>次</p>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="1、sql表设计"><a href="#1、sql表设计" class="headerlink" title="1、sql表设计"></a>1、sql表设计</h3><ul>
+<li><p>每张表有主键，禁止使用外键–外键导致表之间的耦合，update和delete操作都会涉及相关表，影响性能</p>
+</li>
+<li><p>禁止存大文件或者照片–在数据库里存储URI</p>
+</li>
+<li><p>sql每张表控制在500W以内，否则建议分表</p>
+</li>
+<li><p>分库分表、读写分离（sql主备同步）</p>
+</li>
+</ul>
+<h3 id="2、sql表优化"><a href="#2、sql表优化" class="headerlink" title="2、sql表优化"></a>2、sql表优化</h3><ul>
+<li>尽量少 join</li>
+</ul>
+<p>　　MySQL 的优势在于简单，但这在某些方面其实也是其劣势。MySQL 优化器效率高，但是由于其统计信息的量有限，优化器工作过程出现偏差的可能性也就更多。对于复杂的多表 Join，一方面由于其优化器受限，再者在 Join 这方面所下的功夫还不够，所以性能表现离 Oracle 等关系型数据库前辈还是有一定距离。但如果是简单的单表查询，这一差距就会极小甚至在有些场景下要优于这些数据库前辈。</p>
+<ul>
+<li>尽量少排序</li>
+</ul>
+<p>　　排序操作会消耗较多的 CPU 资源，所以减少排序可以在缓存命中率高等 IO 能力足够的场景下会较大影响 SQL 的响应时间。</p>
+<p>　　对于MySQL来说，减少排序有多种办法，比如：</p>
+<p>　　上面误区中提到的通过利用索引来排序的方式进行优化</p>
+<p>　　减少参与排序的记录条数</p>
+<p>　　非必要不对数据进行排序</p>
+<ul>
+<li>尽量避免 select *</li>
+</ul>
+<p>　　很多人看到这一点后觉得比较难理解，上面不是在误区中刚刚说 select 子句中字段的多少并不会影响到读取的数据吗?</p>
+<p>　　是的，大多数时候并不会影响到 IO 量，但是当我们还存在 order by 操作的时候，select 子句中的字段多少会在很大程度上影响到我们的排序效率，这一点可以通过我之前一篇介绍 MySQL ORDER BY 的实现分析的文章中有较为详细的介绍。</p>
+<p>　　此外，上面误区中不是也说了，只是大多数时候是不会影响到 IO 量，当我们的查询结果仅仅只需要在索引中就能找到的时候，还是会极大减少 IO 量的。</p>
+<ul>
+<li>尽量用 join 代替子查询</li>
+</ul>
+<p>　　虽然 Join 性能并不佳，但是和 MySQL 的子查询比起来还是有非常大的性能优势。MySQL 的子查询执行计划一直存在较大的问题，虽然这个问题已经存在多年，但是到目前已经发布的所有稳定版本中都普遍存在，一直没有太大改善。虽然官方也在很早就承认这一问题，并且承诺尽快解决，但是至少到目前为止我们还没有看到哪一个版本较好的解决了这一问题。</p>
+<ul>
+<li>尽量少 or</li>
+</ul>
+<p>　　当 where 子句中存在多个条件以“或”并存的时候，MySQL 的优化器并没有很好的解决其执行计划优化问题，再加上 MySQL 特有的 SQL 与 Storage 分层架构方式，造成了其性能比较低下，很多时候使用 union all 或者是union(必要的时候)的方式来代替“or”会得到更好的效果。</p>
+<ul>
+<li>尽量用 union all 代替 union</li>
+</ul>
+<p>　　union 和 union all 的差异主要是前者需要将两个(或者多个)结果集合并后再进行唯一性过滤操作，这就会涉及到排序，增加大量的 CPU 运算，加大资源消耗及延迟。所以当我们可以确认不可能出现重复结果集或者不在乎重复结果集的时候，尽量使用 union all 而不是 union。</p>
+<ul>
+<li>尽量早过滤</li>
+</ul>
+<p>　　这一优化策略其实最常见于索引的优化设计中(将过滤性更好的字段放得更靠前)。</p>
+<p>　　在 SQL 编写中同样可以使用这一原则来优化一些 Join 的 SQL。比如我们在多个表进行分页数据查询的时候，我们最好是能够在一个表上先过滤好数据分好页，然后再用分好页的结果集与另外的表 Join，这样可以尽可能多的减少不必要的 IO 操作，大大节省 IO 操作所消耗的时间。</p>
+<ul>
+<li>避免类型转换</li>
+</ul>
+<p>　　这里所说的“类型转换”是指 where 子句中出现 column 字段的类型和传入的参数类型不一致的时候发生的类型转换：</p>
+<p>　　人为在column_name 上通过转换函数进行转换</p>
+<p>　　直接导致 MySQL(实际上其他数据库也会有同样的问题)无法使用索引，如果非要转换，应该在传入的参数上进行转换</p>
+<p>　　由数据库自己进行转换</p>
+<p>　　如果我们传入的数据类型和字段类型不一致，同时我们又没有做任何类型转换处理，MySQL 可能会自己对我们的数据进行类型转换操作，也可能不进行处理而交由存储引擎去处理，这样一来，就会出现索引无法使用的情况而造成执行计划问题。</p>
+<ul>
+<li>优先优化高并发的 SQL，而不是执行频率低某些“大”SQL</li>
+</ul>
+<p>　　对于破坏性来说，高并发的 SQL 总是会比低频率的来得大，因为高并发的 SQL 一旦出现问题，甚至不会给我们任何喘息的机会就会将系统压跨。而对于一些虽然需要消耗大量 IO 而且响应很慢的 SQL，由于频率低，即使遇到，最多就是让整个系统响应慢一点，但至少可能撑一会儿，让我们有缓冲的机会。</p>
+<ul>
+<li>从全局出发优化，而不是片面调整</li>
+</ul>
+<p>　　SQL 优化不能是单独针对某一个进行，而应充分考虑系统中所有的 SQL，尤其是在通过调整索引优化 SQL 的执行计划的时候，千万不能顾此失彼，因小失大。</p>
+<ul>
+<li>尽可能对每一条运行在数据库中的SQL进行 explain</li>
+</ul>
+<p>　　优化 SQL，需要做到心中有数，知道 SQL 的执行计划才能判断是否有优化余地，才能判断是否存在执行计划问题。在对数据库中运行的 SQL 进行了一段时间的优化之后，很明显的问题 SQL 可能已经很少了，大多都需要去发掘，这时候就需要进行大量的 explain 操作收集执行计划，并判断是否需要进行优化。</p>
 
-        </article>
-        
-        
+      
+       
+    </div>
+</article>
+
+
+
+
+
+
+
+    
+
+
+
+
     </div>
     <div class="copyright">
         

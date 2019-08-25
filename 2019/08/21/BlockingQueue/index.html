@@ -2,9 +2,9 @@
 <html>
 <head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="utf-8">
-  <title>爱吃苹果的猫</title>
-  <meta name="keywords" content>
-  <meta name="description" content="爱吃苹果的猫">
+  <title>BlockingQueue | 爱吃苹果的猫</title>
+  <meta name="keywords" content=" java ">
+  <meta name="description" content="BlockingQueue | 爱吃苹果的猫">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="description" content="java.lang.OutOfMemoryError: Java heap space  java.lang.OutOfMemoryError: PermGen space  java.lang.OutOfMemoryError: Metaspace   java.lang.OutOfMemoryError，是指程序在申请内存时，没有足够的内存空间供其使用，出现OutOfMemoryError">
 <meta name="keywords" content="java">
@@ -53,7 +53,7 @@
 </div>
 
 <body>
-<aside class="nav mobile">
+<aside class="nav">
     <div class="nav-left">
         <a href="/" class="avatar_target">
     <img class="avatar" src="/img/miao.ico" />
@@ -262,12 +262,51 @@
         </div>
     </div>
 </aside>
-<div class="post index">
+<div class="post">
     <div class="pjax">
-        <article class="index">
-            <div class="toc-ref">
+        <article id="post-BlockingQueue" class="article article-type-post" itemscope itemprop="blogPost">
     
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#给从不写博客的一个人"><span class="toc-text">给从不写博客的一个人</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么突然要写博客"><span class="toc-text">为什么突然要写博客</span></a></li></ol></li></ol>
+        <h1 class="article-title">BlockingQueue</h1>
+    
+    <div class="article-meta">
+        
+        
+        
+        
+        <span class="tag">
+            
+            <a href="javascript:" class="color5">java</a>
+            
+        </span>
+        
+    </div>
+    <div class="article-meta">
+        
+        创建时间:<time class="date" title='更新时间: 2019-08-22 13:32:47'>2019-08-21 12:52</time>
+        
+    </div>
+    <div class="article-meta">
+        
+        <span>字数:404</span>
+        
+        
+        <span id="busuanzi_container_page_pv">
+            阅读:<span id="busuanzi_value_page_pv">
+                <span class="count-comment">
+                    <span class="spinner">
+                      <div class="cube1"></div>
+                      <div class="cube2"></div>
+                    </span>
+                </span>
+            </span>
+        </span>
+        
+        
+    </div>
+    
+    <div class="toc-ref">
+    
+        
     
 <style>
     .left-col .switch-btn,
@@ -280,15 +319,70 @@
     }
 </style>
 </div>
-            <h1 id="给从不写博客的一个人"><a href="#给从不写博客的一个人" class="headerlink" title="给从不写博客的一个人"></a>给从不写博客的一个人</h1><h2 id="为什么突然要写博客"><a href="#为什么突然要写博客" class="headerlink" title="为什么突然要写博客"></a>为什么突然要写博客</h2><p>一晃眼，人生已经走完了青年的大半，最美好的时光业已逝去，清晨在梦中已经开始回忆过往了…….</p>
-<p>小学时，4号路两旁，一排排粗壮的老树，夏天总是会住着好些知了，等着我晚上去抓他们；上了初中，进了县城，每天中午没时间回家，就骑着单车，在县城各个街道上溜达，见识不同的人，不同的物；自然而然考上了高中，不知道是我长大了，还是同学们都长大了，忽然发现每个同学都是那么有自己鲜明的性格，世界的色彩变得多了些，生动了些；大学时，我就是情商发育很晚的那一类人，不懂谈情说爱，转眼就硕士毕业了，工作了，离职了，买了房子….</p>
-<p>可是，回忆越来越少，少得有点无助，有点害怕，只有不经意间才能想起那些人暗些事情……只怕，可能以后再也回忆不起来那些人，那些事了….</p>
-<p>到目前为止已经写了<code class="article_number"></code>篇文章， 共<code class="site_word_count"></code>字。</p>
-<p>本站访问人数：<code class="site_uv"></code>人次 ， 访问量：<code class="site_pv"></code>次</p>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>BlockingQueue</p>
+<p>多线程环境中，通过队列可以很容易实现数据共享，比如经典的“生产者”和“消费者”模型中，通过队列可以很便利地实现两者之间的数据共享.</p>
+<p>线程池也是借助于BlockingQueue实现线程存储和释放。</p>
+<p>BlockingQueue常用有以下实现类：</p>
+<ul>
+<li>ArrayBlockingQueue：是一个用数组实现的有界阻塞队列，此队列按照先进先出（FIFO）的原则对元素进行排序。支持公平锁和非公平锁。【注：每一个线程在获取锁的时候可能都会排队等待，如果在等待时间上，先获取锁的线程的请求一定先被满足，那么这个锁就是公平的。反之，这个锁就是不公平的。公平的获取锁，也就是当前等待时间最长的线程先获取锁】</li>
+<li>LinkedBlockingQueue：一个由链表结构组成的有界队列，此队列的长度为Integer.MAX_VALUE。此队列按照先进先出的顺序进行排序。</li>
+<li>SynchronousQueue： 一个不存储元素的阻塞队列，每一个put操作必须等待take操作，否则不能添加元素。支持公平锁和非公平锁。SynchronousQueue的一个使用场景是在线程池里。Executors.newCachedThreadPool()就使用了SynchronousQueue，这个线程池根据需要（新任务到来时）创建新的线程，如果有空闲线程则会重复使用，线程空闲了60秒后会被回收。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>异常</th>
+<th>true|false|firstNode</th>
+<th>阻塞</th>
+<th>超时</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>插入</td>
+<td>add</td>
+<td>offer</td>
+<td>put</td>
+<td>offer（e，time，unit）</td>
+<td></td>
+</tr>
+<tr>
+<td>删除</td>
+<td>remove</td>
+<td>poll</td>
+<td>take</td>
+<td>poll(time,unit)</td>
+<td></td>
+</tr>
+<tr>
+<td>首元素</td>
+<td>element</td>
+<td>peek</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
 
-        </article>
-        
-        
+      
+       
+    </div>
+</article>
+
+
+
+
+
+
+
+    
+
+
+
+
     </div>
     <div class="copyright">
         

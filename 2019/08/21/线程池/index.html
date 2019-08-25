@@ -2,9 +2,9 @@
 <html>
 <head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="utf-8">
-  <title>爱吃苹果的猫</title>
-  <meta name="keywords" content>
-  <meta name="description" content="爱吃苹果的猫">
+  <title>线程池 | 爱吃苹果的猫</title>
+  <meta name="keywords" content=" java ">
+  <meta name="description" content="线程池 | 爱吃苹果的猫">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="description" content="java.lang.OutOfMemoryError: Java heap space  java.lang.OutOfMemoryError: PermGen space  java.lang.OutOfMemoryError: Metaspace   java.lang.OutOfMemoryError，是指程序在申请内存时，没有足够的内存空间供其使用，出现OutOfMemoryError">
 <meta name="keywords" content="java">
@@ -53,7 +53,7 @@
 </div>
 
 <body>
-<aside class="nav mobile">
+<aside class="nav">
     <div class="nav-left">
         <a href="/" class="avatar_target">
     <img class="avatar" src="/img/miao.ico" />
@@ -262,12 +262,51 @@
         </div>
     </div>
 </aside>
-<div class="post index">
+<div class="post">
     <div class="pjax">
-        <article class="index">
-            <div class="toc-ref">
+        <article id="post-线程池" class="article article-type-post" itemscope itemprop="blogPost">
     
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#给从不写博客的一个人"><span class="toc-text">给从不写博客的一个人</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#为什么突然要写博客"><span class="toc-text">为什么突然要写博客</span></a></li></ol></li></ol>
+        <h1 class="article-title">线程池</h1>
+    
+    <div class="article-meta">
+        
+        
+        
+        
+        <span class="tag">
+            
+            <a href="javascript:" class="color5">java</a>
+            
+        </span>
+        
+    </div>
+    <div class="article-meta">
+        
+        创建时间:<time class="date" title='更新时间: 2019-08-22 13:33:01'>2019-08-21 11:41</time>
+        
+    </div>
+    <div class="article-meta">
+        
+        <span>字数:135</span>
+        
+        
+        <span id="busuanzi_container_page_pv">
+            阅读:<span id="busuanzi_value_page_pv">
+                <span class="count-comment">
+                    <span class="spinner">
+                      <div class="cube1"></div>
+                      <div class="cube2"></div>
+                    </span>
+                </span>
+            </span>
+        </span>
+        
+        
+    </div>
+    
+    <div class="toc-ref">
+    
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么使用线程池"><span class="toc-text">为什么使用线程池</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如何使用"><span class="toc-text">如何使用</span></a></li></ol>
     
 <style>
     .left-col .switch-btn,
@@ -280,15 +319,36 @@
     }
 </style>
 </div>
-            <h1 id="给从不写博客的一个人"><a href="#给从不写博客的一个人" class="headerlink" title="给从不写博客的一个人"></a>给从不写博客的一个人</h1><h2 id="为什么突然要写博客"><a href="#为什么突然要写博客" class="headerlink" title="为什么突然要写博客"></a>为什么突然要写博客</h2><p>一晃眼，人生已经走完了青年的大半，最美好的时光业已逝去，清晨在梦中已经开始回忆过往了…….</p>
-<p>小学时，4号路两旁，一排排粗壮的老树，夏天总是会住着好些知了，等着我晚上去抓他们；上了初中，进了县城，每天中午没时间回家，就骑着单车，在县城各个街道上溜达，见识不同的人，不同的物；自然而然考上了高中，不知道是我长大了，还是同学们都长大了，忽然发现每个同学都是那么有自己鲜明的性格，世界的色彩变得多了些，生动了些；大学时，我就是情商发育很晚的那一类人，不懂谈情说爱，转眼就硕士毕业了，工作了，离职了，买了房子….</p>
-<p>可是，回忆越来越少，少得有点无助，有点害怕，只有不经意间才能想起那些人暗些事情……只怕，可能以后再也回忆不起来那些人，那些事了….</p>
-<p>到目前为止已经写了<code class="article_number"></code>篇文章， 共<code class="site_word_count"></code>字。</p>
-<p>本站访问人数：<code class="site_uv"></code>人次 ， 访问量：<code class="site_pv"></code>次</p>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>线程池这个东东，一直知道有，却从来没用过，因为很少涉及到线程多到需要管理的case，一般就俩线程，还管理个啥…..</p>
+<p>今天学习下。</p>
+<h3 id="为什么使用线程池"><a href="#为什么使用线程池" class="headerlink" title="为什么使用线程池"></a>为什么使用线程池</h3><ul>
+<li><p>降低资源消耗：线程不必频繁创建和销毁，CPU也无需多次进行线程切换</p>
+</li>
+<li><p>提高响应速度：任务可以快速执行，无需重新创建线程</p>
+</li>
+<li><p>实现线程的管理：对线程实现集中管理，有序监控</p>
+</li>
+</ul>
+<h3 id="如何使用"><a href="#如何使用" class="headerlink" title="如何使用"></a>如何使用</h3><p>ThreadPoolExecutor</p>
 
-        </article>
-        
-        
+      
+       
+    </div>
+</article>
+
+
+
+
+
+
+
+    
+
+
+
+
     </div>
     <div class="copyright">
         
