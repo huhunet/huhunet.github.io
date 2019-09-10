@@ -2,9 +2,9 @@
 <html>
 <head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="utf-8">
-  <title>springboot-restTemplate | 爱吃苹果的猫</title>
-  <meta name="keywords" content=" springboot ">
-  <meta name="description" content="springboot-restTemplate | 爱吃苹果的猫">
+  <title>动态代理 | 爱吃苹果的猫</title>
+  <meta name="keywords" content>
+  <meta name="description" content="动态代理 | 爱吃苹果的猫">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="description" content="学习下SocketChannel： NIO包下主要包含2个部分：filechannel和socket，filechannel其实是blocking，真正的nio是socket。 NIO 下的socket通信和BIO中的不同在于，BIO一个tcp链接需要一个线程；而NIO基于通道轮训，一个线程可以管理多个客户端的请求，管理者即selector。 NIO Socket的代码如下： public cla">
 <meta name="keywords" content="java">
@@ -312,30 +312,24 @@
 </aside>
 <div class="post">
     <div class="pjax">
-        <article id="post-springboot-restTemplate" class="article article-type-post" itemscope itemprop="blogPost">
+        <article id="post-动态代理" class="article article-type-post" itemscope itemprop="blogPost">
     
-        <h1 class="article-title">springboot-restTemplate</h1>
+        <h1 class="article-title">动态代理</h1>
     
     <div class="article-meta">
         
         
         
-        
-        <span class="tag">
-            
-            <a href="javascript:" class="color1">springboot</a>
-            
-        </span>
         
     </div>
     <div class="article-meta">
         
-        创建时间:<time class="date" title='更新时间: 2019-08-26 12:09:13'>2019-08-22 13:31</time>
+        创建时间:<time class="date" title='更新时间: 2019-09-08 10:48:35'>2019-09-08 09:08</time>
         
     </div>
     <div class="article-meta">
         
-        <span>字数:306</span>
+        <span>字数:139</span>
         
         
         <span id="busuanzi_container_page_pv">
@@ -369,26 +363,34 @@
 </div>
     <div class="article-entry" itemprop="articleBody">
       
-        <p>restTemplate用来进行restful接口调用，例如可以通过Get <a href="https://gturnquist-quoters.cfapps.io/api/random接口获取到如下返回值。" target="_blank" rel="noopener">https://gturnquist-quoters.cfapps.io/api/random接口获取到如下返回值。</a></p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">   type: <span class="string">"success"</span>,</span><br><span class="line">   value: &#123;</span><br><span class="line">      id: <span class="number">10</span>,</span><br><span class="line">      quote: <span class="string">"Really loving Spring Boot, makes stand alone Spring apps easy."</span></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        <p>动态代理相对于静态代理，代理类无需因为委托类儿变更，下面为动态代理的代理类。</p>
+<p>动态代理也分为3部分：接口类、委托类（实现类）、代理类。</p>
+<p>public class DynamicProxy implements InvocationHandler {</p>
+<pre><code>private Object realObject;
+public Object getProxy(Object realObject) {
+    this.realObject = realObject;
+    Object proxyObject = Proxy.newProxyInstance(
+            realObject.getClass().getClassLoader(),
+            realObject.getClass().getInterfaces(),
+            this
+    );
+    return proxyObject;
+}
+@Override
+public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    long start = System.currentTimeMillis();
+    Object result = method.invoke(realObject, args);
+    System.out.println(&quot;耗时：&quot; + (System.currentTimeMillis() - start));
+    return result;
+}
 
-<p>实现方法：</p>
-<ul>
-<li>定义返回值实体类</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@JsonIgnoreProperties</span>(ignoreUnknown = <span class="keyword">true</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Quote</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String type;</span><br><span class="line">    <span class="keyword">private</span> Value value;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Quote</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getType</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> type;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setType</span><span class="params">(String type)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.type = type;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Value <span class="title">getValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setValue</span><span class="params">(Value value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.value = value;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Quote&#123;"</span> +</span><br><span class="line">                <span class="string">"type='"</span> + type + <span class="string">'\''</span> +</span><br><span class="line">                <span class="string">", value="</span> + value +</span><br><span class="line">                <span class="string">'&#125;'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@JsonIgnoreProperties</span>(ignoreUnknown = <span class="keyword">true</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Value</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    <span class="keyword">private</span> String quote;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Value</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Long <span class="title">getId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getQuote</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.quote;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(Long id)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.id = id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setQuote</span><span class="params">(String quote)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.quote = quote;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Value&#123;"</span> +</span><br><span class="line">                <span class="string">"id="</span> + id +</span><br><span class="line">                <span class="string">", quote='"</span> + quote + <span class="string">'\''</span> +</span><br><span class="line">                <span class="string">'&#125;'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+public static void main(String[] args){
+    IWater water = new River();
+    IWater result = (IWater) new DynamicProxy().getProxy(water);
+    result.flow();
+}</code></pre><p>}</p>
 
-<ul>
-<li>定义bean</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LearningApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		SpringApplication.run(LearningApplication.class, args);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="meta">@Bean</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> RestTemplate <span class="title">build</span><span class="params">(RestTemplateBuilder build)</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> build.build();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>使用</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HiController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Logger log = Logger.getLogger(HiController.class.getName());</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    RestTemplate restTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/hi*"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Quote <span class="title">get</span><span class="params">()</span></span>&#123;</span><br><span class="line">        Quote quote = restTemplate.getForObject(<span class="string">"http://localhost:8080/hello"</span>, Quote.class);</span><br><span class="line">        log.info(quote.toString());</span><br><span class="line">        <span class="keyword">return</span> quote;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/hello*"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Quote <span class="title">getQuote</span><span class="params">()</span></span>&#123;</span><br><span class="line">        Quote quote = <span class="keyword">new</span> Quote();</span><br><span class="line">        quote.setType(<span class="string">"type"</span>);</span><br><span class="line">        Value value = <span class="keyword">new</span> Value();</span><br><span class="line">        value.setId(<span class="number">11L</span>);</span><br><span class="line">        value.setQuote(<span class="string">"2"</span>);</span><br><span class="line">        quote.setValue(value);</span><br><span class="line">        <span class="keyword">return</span> quote;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
       
        
     </div>

@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <title>nio之socket | 爱吃苹果的猫</title>
+  <meta name="keywords" content=" java ">
+  <meta name="description" content="nio之socket | 爱吃苹果的猫">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="description" content="学习下SocketChannel： NIO包下主要包含2个部分：filechannel和socket，filechannel其实是blocking，真正的nio是socket。 NIO 下的socket通信和BIO中的不同在于，BIO一个tcp链接需要一个线程；而NIO基于通道轮训，一个线程可以管理多个客户端的请求，管理者即selector。 NIO Socket的代码如下： public cla">
+<meta name="keywords" content="java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nio之socket">
+<meta property="og:url" content="http://yoursite.com/child/2019/09/09/nio之socket/index.html">
+<meta property="og:site_name" content="爱吃苹果的猫">
+<meta property="og:description" content="学习下SocketChannel： NIO包下主要包含2个部分：filechannel和socket，filechannel其实是blocking，真正的nio是socket。 NIO 下的socket通信和BIO中的不同在于，BIO一个tcp链接需要一个线程；而NIO基于通道轮训，一个线程可以管理多个客户端的请求，管理者即selector。 NIO Socket的代码如下： public cla">
+<meta property="og:locale" content="zh_cn">
+<meta property="og:updated_time" content="2019-09-10T10:24:33.122Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="nio之socket">
+<meta name="twitter:description" content="学习下SocketChannel： NIO包下主要包含2个部分：filechannel和socket，filechannel其实是blocking，真正的nio是socket。 NIO 下的socket通信和BIO中的不同在于，BIO一个tcp链接需要一个线程；而NIO基于通道轮训，一个线程可以管理多个客户端的请求，管理者即selector。 NIO Socket的代码如下： public cla">
+
+
+<link rel="icon" href="/img/miao.ico">
+
+<link href="/css/style.css?v=1.0.1" rel="stylesheet">
+
+<link href="/css/hl_theme/atom-light.css?v=1.0.1" rel="stylesheet">
+
+<link href="//cdn.bootcss.com/animate.css/3.5.2/animate.min.css" rel="stylesheet">
+<link href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="/js/jquery.autocomplete.min.js?v=1.0.1"></script>
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script>
+    hljs.initHighlightingOnLoad();
+</script>
+
+<script src="//cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+
+<script src="/js/iconfont.js?v=1.0.1"></script>
+
+</head>
+<div style="display: none">
+  <input class="theme_disqus_on" value="false">
+  <input class="theme_preload_comment" value="false">
+  <input class="theme_blog_path" value>
+</div>
+
+<body>
+<aside class="nav">
+    <div class="nav-left">
+        <a href="/" class="avatar_target">
+    <img class="avatar" src="/img/miao.ico" />
+</a>
+<div class="author">
+    <span>Miracle</span>
+</div>
+
+<div class="icon">
+    
+        
+    
+        
+        <a title="github" href="https://github.com/huhunet" target="_blank">
+            
+                <svg class="iconfont-svg" aria-hidden="true">
+                    <use xlink:href="#icon-github"></use>
+                </svg>
+            
+        </a>
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        <a title="email" href="mailto:huhunet@163.com" target="_blank">
+            
+                <svg class="iconfont-svg" aria-hidden="true">
+                    <use xlink:href="#icon-email"></use>
+                </svg>
+            
+        </a>
+        
+    
+        
+    
+        
+    
+        
+    
+</div>
+
+
+
+
+<ul>
+    <li><div class="all active">全部文章<small>(14)</small></div></li>
+    
+</ul>
+<div class="left-bottom">
+    <div class="menus">
+    
+    
+    
+    
+    </div>
+    <div><a  class="friends">友链</a></div>
+</div>
+<input type="hidden" id="yelog_site_posts_number" value="14">
+<input type="hidden" id="yelog_site_word_count" value="6.3k">
+<div style="display: none">
+    <span id="busuanzi_value_site_uv"></span>
+    <span id="busuanzi_value_site_pv"></span>
+</div>
+
+    </div>
+    <div class="nav-right">
+        <div class="friends-area">
+    <div class="friends-title">
+        友情链接
+        <i class="back-title-list"></i>
+    </div>
+    <div class="friends-content">
+        <ul>
+            
+            <li><a target="_blank" href="http://github.com">github</a></li>
+            
+        </ul>
+    </div>
+</div>
+        <div class="title-list">
+    <form onkeydown="if(event.keyCode==13){return false;}">
+        <input class="search" type="text" placeholder="Search..." autocomplete="off"id="local-search-input" >
+        <i class="cross"></i>
+        <span>
+            <label for="tagswitch">Tags:</label>
+            <input id="tagswitch" type="checkbox" style="display: none" />
+            <i id="tagsWitchIcon"></i>
+        </span>
+    </form>
+    <div class="tags-list">
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color5">java</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color1">springboot</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color5">Java</a>
+    </li>
+    
+    <li class="article-tag-list-item">
+        <a href="javascript:" class="color4">nio</a>
+    </li>
+    
+    <div class="clearfix"></div>
+</div>
+
+    
+    <nav id="title-list-nav">
+        
+        <a  class=""
+           href="/2019/08/21/BlockingQueue/"
+           data-tag="java"
+           data-author="" >
+            <span class="post-title" title="BlockingQueue">BlockingQueue</span>
+            <span class="post-date" title="2019-08-21 12:52:55">2019/08/21</span>
+        </a>
+        
+        <a  class=""
+           href="/2019/08/17/Mybatis使用/"
+           data-tag="springboot"
+           data-author="" >
+            <span class="post-title" title="Mybatis 使用">Mybatis 使用</span>
+            <span class="post-date" title="2019-08-17 10:20:07">2019/08/17</span>
+        </a>
+        
+        <a  class=""
+           href="/2019/08/17/Spring理解/"
+           data-tag=""
+           data-author="" >
+            <span class="post-title" title="Spring理解">Spring理解</span>
+            <span class="post-date" title="2019-08-17 11:47:42">2019/08/17</span>
+        </a>
+        
+        <a  class=""
+           href="/2019/09/08/Stream/"
+           data-tag="Java"
+           data-author="" >
+            <span class="post-title" title="Stream">Stream</span>
+            <span class="post-date" title="2019-09-08 07:37:47">2019/09/08</span>
+        </a>
+        
+        <a  class=""
+           href="/2019/09/09/nio之filechannel/"
+           data-tag="nio"
+           data-author="" >
+            <span class="post-title" title="nio之filechannel">nio之filechannel</span>
+            <span class="post-date" title="2019-09-09 11:41:14">2019/09/09</span>
+        </a>
+        
+        <a  class=""
+           href="/2019/08/26/restTemplate使用/"
+           data-tag="springboot"
+           data-author="" >
+            <span class="post-title" title="restTemplate使用">restTemplate使用</span>
+            <span class="post-date" title="2019-08-26 12:11:02">2019/08/26</span>
+        </a>
+        
+        <a  class=""
+           href="/2019/08/22/springboot-restTemplate/"
+           data-tag="springboot"
+           data-author="" >
+            <span class="post-title" title="springboot-restTemplate">springboot-restTemplate</span>
+            <span class="post-date" title="2019-08-22 13:31:31">2019/08/22</span>
+        </a>
+        
+        <a  class=""
+           href="/2019/08/21/springboot-定时任务/"
+           data-tag="springboot"
+           data-author="" >
+            <span class="post-title" title="springboot-定时任务">springboot-定时任务</span>
+            <span class="post-date" title="2019-08-21 15:35:58">2019/08/21</span>
+        </a>
+        
+        <a  class=""
+           href="/2019/08/21/sql优化/"
+           data-tag=""
+           data-author="" >
+            <span class="post-title" title="sql优化">sql优化</span>
+            <span class="post-date" title="2019-08-21 14:03:05">2019/08/21</span>
+        </a>
+        
+        <a  class=""
+           href="/2019/08/25/内存溢出/"
+           data-tag="java"
+           data-author="" >
+            <span class="post-title" title="内存溢出">内存溢出</span>
+            <span class="post-date" title="2019-08-25 21:18:38">2019/08/25</span>
+        </a>
+        
+        <a  class=""
+           href="/2019/09/08/动态代理/"
+           data-tag=""
+           data-author="" >
+            <span class="post-title" title="动态代理">动态代理</span>
+            <span class="post-date" title="2019-09-08 09:08:50">2019/09/08</span>
+        </a>
+        
+        <a  class=""
+           href="/2019/08/21/线程池/"
+           data-tag="java"
+           data-author="" >
+            <span class="post-title" title="线程池">线程池</span>
+            <span class="post-date" title="2019-08-21 11:41:33">2019/08/21</span>
+        </a>
+        
+        <a  class=""
+           href="/2019/08/21/设计模式之build模式/"
+           data-tag=""
+           data-author="" >
+            <span class="post-title" title="设计模式之build模式">设计模式之build模式</span>
+            <span class="post-date" title="2019-08-21 10:52:37">2019/08/21</span>
+        </a>
+        
+        <a  class=""
+           href="/2019/09/09/nio之socket/"
+           data-tag="java"
+           data-author="" >
+            <span class="post-title" title="nio之socket">nio之socket</span>
+            <span class="post-date" title="2019-09-09 11:49:48">2019/09/09</span>
+        </a>
+        
+    </nav>
+</div>
+    </div>
+    <div class="hide-list">
+        <div class="semicircle">
+            <div class="brackets first"><</div>
+            <div class="brackets">&gt;</div>
+        </div>
+    </div>
+</aside>
+<div class="post">
+    <div class="pjax">
+        <article id="post-nio之socket" class="article article-type-post" itemscope itemprop="blogPost">
+    
+        <h1 class="article-title">nio之socket</h1>
+    
+    <div class="article-meta">
+        
+        
+        
+        
+        <span class="tag">
+            
+            <a href="javascript:" class="color5">java</a>
+            
+        </span>
+        
+    </div>
+    <div class="article-meta">
+        
+        创建时间:<time class="date" title='更新时间: 2019-09-10 18:24:33'>2019-09-09 11:49</time>
+        
+    </div>
+    <div class="article-meta">
+        
+        <span>字数:1.2k</span>
+        
+        
+        <span id="busuanzi_container_page_pv">
+            阅读:<span id="busuanzi_value_page_pv">
+                <span class="count-comment">
+                    <span class="spinner">
+                      <div class="cube1"></div>
+                      <div class="cube2"></div>
+                    </span>
+                </span>
+            </span>
+        </span>
+        
+        
+    </div>
+    
+    <div class="toc-ref">
+    
+        
+    
+<style>
+    .left-col .switch-btn,
+    .left-col .switch-area {
+        display: none;
+    }
+    .toc-level-3 i,
+    .toc-level-3 ol {
+        display: none !important;
+    }
+</style>
+</div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>学习下SocketChannel：</p>
+<p>NIO包下主要包含2个部分：filechannel和socket，filechannel其实是blocking，真正的nio是socket。</p>
+<p>NIO 下的socket通信和BIO中的不同在于，BIO一个tcp链接需要一个线程；而NIO基于通道轮训，一个线程可以管理多个客户端的请求，管理者即selector。</p>
+<p>NIO Socket的代码如下：</p>
+<p>public class NIOServer implements Runnable{<br>    private Logger Log = Logger.getLogger(NIOServer.class.getName());<br>    private Selector selector;<br>    private ByteBuffer writeBuffer = ByteBuffer.allocate(1024);<br>    private ByteBuffer readBuffer = ByteBuffer.allocate(1024);</p>
+<pre><code>public void init() {
+    try {
+        // 1、打开服务器套接字通道
+        ServerSocketChannel socket = ServerSocketChannel.open();
+        // 2、服务器配置为非阻塞
+        socket.configureBlocking(false);
+        // 3、进行服务的绑定
+        socket.socket().bind(new InetSocketAddress(&quot;localhost&quot;, 8001));
+        // 4、通过open()方法找到Selector
+        this.selector = Selector.open();
+        // 5、注册到selector，等待连接
+        socket.register(selector, SelectionKey.OP_ACCEPT);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+
+public void handleAcceptEvent(SelectionKey key) throws IOException {
+    ServerSocketChannel server = (ServerSocketChannel) key.channel();
+    // 得到与客户端的套接字通道
+    //ServerSocketChannel的accept接收客户端的连接请求并创建SocketChannel实例，完成上述操作后，相当于完成了TCP的三次握手，TCP物理链路正式建立。
+    //将新创建的SocketChannel设置为异步非阻塞，同时也可以对其TCP参数进行设置，例如TCP接收和发送缓冲区的大小等。此处省掉
+    SocketChannel socket = server.accept();
+    socket.configureBlocking(false);
+    socket.register(selector,SelectionKey.OP_READ);
+    //将key对应Channel设置为准备接受其他请求
+    key.interestOps(SelectionKey.OP_ACCEPT);
+}
+
+public void handleReadEvent(SelectionKey key) throws IOException {
+    SocketChannel socket = (SocketChannel) key.channel();
+    //将缓冲区清空以备下次读取
+    readBuffer.clear();
+    int num = socket.read(readBuffer);
+    Log.info(&quot;receive:&quot; + new String(readBuffer.array(),0,num));
+    socket.register(this.selector,SelectionKey.OP_WRITE);
+    key.attach(&quot;I hava got what you said&quot;);
+}
+
+/**
+ * 为什么要注册写事件?
+ * Selector.isWriteable()方法监控的是内核的写缓冲器是否可写，所以除非内核的写缓冲区满了，
+ * 否则一旦一个SocketChannel注册了写事件，每次selector都会选中这个SocketChannel,进入到isWriteable()分支中去。
+ * 实际上服务器端写消息时完全可以不注册写事件，直接调用SocketChannel.write(ByteBuffer)，
+ * 也能把数据写到缓冲区并发送出去。但是这种情况下selector不会选择到isWriteable()分支。
+ * 在写缓冲区满的情况下处理也不灵活，需要while(ByteBuffer.hasRemain())来检查写的状态，会导致CPU空转while.
+ * 更好的做法是注册写事件。注册写事件也有两种做法，一种是SocketChannel.register(selector, SelectionKey.OP_WRITE)，
+ * 直接注册到SocketChannel。第二种是用SelectionKey.interestOps(SelectionKey.interestOps() | SelectionKey.OP_WRITE），
+ * 用SelectionKey来注册。每个SelectionKey只会关联一个SocketChannel，相当于注册到了SocketChannel上。
+ * 业务方法只需要操作Attachment，往Attachment里面写，然后在Selector.isWriteable()分支里面取出写好的Attachment，
+ * 然后调用SocketChannel.Write(ByteBuffer) 方法来把数据写到Channel。
+ */
+public void handleWriteEvent(SelectionKey key) throws IOException {
+    SocketChannel socket = (SocketChannel) key.channel();
+    // get content from attachment
+    String content = (String) key.attachment();
+    writeBuffer.clear();
+    // write content to socket channel
+    socket.write(ByteBuffer.wrap(content.getBytes()));
+    writeBuffer.flip();
+    socket.register(this.selector,SelectionKey.OP_READ);
+    Log.info(&quot;send:&quot; + content);
+}
+
+public void handleSocketEvent(){
+    try {
+        while(true){
+            //judge the client = = 0
+            int count = this.selector.select(1000);
+            if(count == 0){
+                continue;
+            }
+            Iterator&lt;SelectionKey&gt; it = selector.selectedKeys().iterator();
+            while(it.hasNext()) {
+                SelectionKey key = it.next();
+                if(key.isAcceptable()){
+                    this.handleAcceptEvent(key);
+                }else if(key.isReadable()){
+                    this.handleReadEvent(key);
+                }else if(key.isWritable()){
+                    this.handleWriteEvent(key);
+                }
+                it.remove();
+            }
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+
+public void run(){
+    this.init();
+    this.handleSocketEvent();
+}
+
+public static void main(String[] args) throws InterruptedException {
+
+    ExecutorService server = Executors.newFixedThreadPool(2);
+    server.submit(new NIOServer());
+
+    server.submit(new NIOClient());;</code></pre><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>}</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NIOClient</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Selector selector;</span><br><span class="line">    <span class="keyword">private</span> SocketChannel socket;</span><br><span class="line">    <span class="keyword">private</span> ByteBuffer writeBuffer = ByteBuffer.allocate(<span class="number">1024</span>);</span><br><span class="line">    <span class="keyword">private</span> ByteBuffer readBuffer = ByteBuffer.allocate(<span class="number">1024</span>);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="comment">//1、打开socket通道</span></span><br><span class="line">        socket = SocketChannel.open();</span><br><span class="line">        <span class="comment">//2、设置为非阻塞</span></span><br><span class="line">        socket.configureBlocking(<span class="keyword">false</span>);</span><br><span class="line">        <span class="comment">//3、连接服务器地址和端口</span></span><br><span class="line">        socket.connect(<span class="keyword">new</span> InetSocketAddress(<span class="string">"localhost"</span>,<span class="number">8001</span>));</span><br><span class="line">        <span class="comment">//4、通过open()方法找到Selector</span></span><br><span class="line">        <span class="keyword">this</span>.selector = Selector.open();</span><br><span class="line">        <span class="comment">//5、注册连接服务器socket的动作</span></span><br><span class="line">        socket.register(<span class="keyword">this</span>.selector, SelectionKey.OP_CONNECT);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleConnectEvent</span><span class="params">(SelectionKey key)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        socket.finishConnect();</span><br><span class="line">        socket.register(selector, SelectionKey.OP_WRITE);</span><br><span class="line">        System.out.println(<span class="string">"server connected..."</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleReadEvent</span><span class="params">(SelectionKey key)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        SocketChannel client = (SocketChannel) key.channel();</span><br><span class="line">        <span class="comment">//将缓冲区清空以备下次读取</span></span><br><span class="line">        readBuffer.clear();</span><br><span class="line">        <span class="keyword">int</span> num = client.read(readBuffer);</span><br><span class="line">        System.out.println(<span class="keyword">new</span> String(readBuffer.array(), <span class="number">0</span>, num));</span><br><span class="line">        <span class="comment">//注册读操作，下一次读取</span></span><br><span class="line">        socket.register(selector, SelectionKey.OP_WRITE);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleWriteEvent</span><span class="params">(SelectionKey key,Object message)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        writeBuffer.clear();</span><br><span class="line">        writeBuffer.put(message.toString().getBytes());</span><br><span class="line">        <span class="comment">//将缓冲区各标志复位,因为向里面put了数据标志被改变要想从中读取数据发向服务器,就要复位</span></span><br><span class="line">        writeBuffer.flip();</span><br><span class="line">        socket.write(writeBuffer);</span><br><span class="line">        socket.register(selector, SelectionKey.OP_READ);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleSocketEvent</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                <span class="comment">//选择一组键，其相应的通道已为 I/O 操作准备就绪。</span></span><br><span class="line">                <span class="comment">//此方法执行处于阻塞模式的选择操作。</span></span><br><span class="line">                <span class="keyword">this</span>.selector.select();</span><br><span class="line">                <span class="comment">//返回此选择器的已选择键集。</span></span><br><span class="line">                Set&lt;SelectionKey&gt; keys = selector.selectedKeys();</span><br><span class="line">                Iterator&lt;SelectionKey&gt; keyIterator = keys.iterator();</span><br><span class="line">                <span class="keyword">while</span> (keyIterator.hasNext()) &#123;</span><br><span class="line">                    SelectionKey key = keyIterator.next();</span><br><span class="line">                    keyIterator.remove();</span><br><span class="line">                    <span class="comment">// 判断此通道上是否正在进行连接操作。</span></span><br><span class="line">                    <span class="keyword">if</span> (key.isConnectable()) &#123;</span><br><span class="line">                        <span class="keyword">this</span>.handleConnectEvent(key);</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (key.isWritable()) &#123; <span class="comment">//写数据</span></span><br><span class="line">                        <span class="keyword">this</span>.handleWriteEvent(key, <span class="string">"I want to send somingthing"</span>);</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (key.isReadable()) &#123;<span class="comment">//读取数据</span></span><br><span class="line">                        <span class="keyword">this</span>.handleReadEvent(key);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">this</span>.init();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">this</span>.handleSocketEvent();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+       
+    </div>
+</article>
+
+
+
+
+
+
+
+    
+
+
+
+
+    </div>
+    <div class="copyright">
+        
+    </div>
+    <div class="full-toc">
+        <button class="full"><span class="min "></span></button>
+<button class="post-toc-menu"><span class="post-toc-menu-icons"></span></button>
+<div class="post-toc"><span class="post-toc-title">目录</span>
+    <div class="post-toc-content">
+
+    </div>
+</div>
+<a class="" id="rocket" href="javascript:void(0)"></a>
+    </div>
+</div>
+<div class="acParent"></div>
+
+</body>
+<script src="//cdn.bootcss.com/jquery.pjax/2.0.1/jquery.pjax.min.js"></script>
+
+<script src="/js/script.js?v=1.0.1" ></script>
+<script>
+    var img_resize = 'default';
+    /*作者、标签的自动补全*/
+    $(function () {
+        $('.search').AutoComplete({
+            'data': ['#java','#springboot','#Java','#nio',],
+            'itemHeight': 20,
+            'width': 418
+        }).AutoComplete('show');
+    })
+    function initArticle() {
+        /*渲染对应的表格样式*/
+        
+            $(".post .pjax table").addClass("green_title");
+        
+
+        /*渲染打赏样式*/
+        
+
+        /*高亮代码块行号*/
+        
+        $('pre code').each(function(){
+            var lines = $(this).text().split('\n').length - 1, widther='';
+            if (lines>99) {
+                widther = 'widther'
+            }
+            var $numbering = $('<ul/>').addClass('pre-numbering ' + widther).attr("unselectable","on");
+            $(this).addClass('has-numbering ' + widther)
+                    .parent()
+                    .append($numbering);
+            for(var i=1;i<=lines;i++){
+                $numbering.append($('<li/>').text(i));
+            }
+        });
+        
+
+        /*访问数量*/
+        
+        $.getScript("//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js");
+        
+
+        /*代码高亮，行号对齐*/
+        $('.pre-numbering').css('line-height',$('.has-numbering').css('line-height'));
+
+        
+    }
+
+    /*打赏页面隐藏与展示*/
+    
+
+</script>
+
+<!--加入行号的高亮代码块样式-->
+
+<style>
+    pre{
+        position: relative;
+        margin-bottom: 24px;
+        border-radius: 10px;
+        border: 1px solid #e2dede;
+        background: #FFF;
+        overflow: hidden;
+    }
+    code.has-numbering{
+        margin-left: 30px;
+    }
+    code.has-numbering.widther{
+        margin-left: 35px;
+    }
+    .pre-numbering{
+        margin: 0px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 20px;
+        padding: 0.5em 3px 0.7em 5px;
+        border-right: 1px solid #C3CCD0;
+        text-align: right;
+        color: #AAA;
+        background-color: #fafafa;
+    }
+    .pre-numbering.widther {
+        width: 35px;
+    }
+</style>
+
+<!--自定义样式设置-->
+<style>
+    
+    
+    .nav {
+        width: 542px;
+    }
+    .nav.fullscreen {
+        margin-left: -542px;
+    }
+    .nav-left {
+        width: 120px;
+    }
+    
+    
+    @media screen and (max-width: 1468px) {
+        .nav {
+            width: 492px;
+        }
+        .nav.fullscreen {
+            margin-left: -492px;
+        }
+        .nav-left {
+            width: 100px;
+        }
+    }
+    
+    
+    @media screen and (max-width: 1024px) {
+        .nav {
+            width: 492px;
+            margin-left: -492px
+        }
+        .nav.fullscreen {
+            margin-left: 0;
+        }
+        .nav .hide-list.fullscreen {
+            left: 492px
+        }
+    }
+    
+    @media screen and (max-width: 426px) {
+        .nav {
+            width: 100%;
+        }
+        .nav-left {
+            width: 100%;
+        }
+    }
+    
+    
+    .nav-right .title-list nav a .post-title, .nav-right .title-list #local-search-result a .post-title {
+        color: #383636;
+    }
+    
+    
+    .nav-right .title-list nav a .post-date, .nav-right .title-list #local-search-result a .post-date {
+        color: #5e5e5f;
+    }
+    
+    
+    .nav-right nav a.hover, #local-search-result a.hover{
+        background-color: #e2e0e0;
+    }
+    
+    
+
+    /*列表样式*/
+    
+    .post .pjax article .article-entry>ol, .post .pjax article .article-entry>ul, .post .pjax article>ol, .post .pjax article>ul{
+        border: #e2dede solid 1px;
+        border-radius: 10px;
+        padding: 10px 32px 10px 56px;
+    }
+    .post .pjax article .article-entry li>ol, .post .pjax article .article-entry li>ul,.post .pjax article li>ol, .post .pjax article li>ul{
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+    .post .pjax article .article-entry>ol>li, .post .pjax article .article-entry>ul>li,.post .pjax article>ol>li, .post .pjax article>ul>li{
+        margin-bottom: auto;
+        margin-left: auto;
+    }
+    .post .pjax article .article-entry li>ol>li, .post .pjax article .article-entry li>ul>li,.post .pjax article li>ol>li, .post .pjax article li>ul>li{
+        margin-bottom: auto;
+        margin-left: auto;
+    }
+    
+
+    /* 背景图样式 */
+    
+    
+
+
+    /*引用块样式*/
+    
+
+    /*文章列表背景图*/
+    
+    .nav-right:before {
+        content: ' ';
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.3;
+        background: url("https://i.loli.net/2019/07/22/5d3521411f3f169375.png");
+        background-repeat: no-repeat;
+        background-position: 50% 0;
+        -ms-background-size: cover;
+        -o-background-size: cover;
+        -moz-background-size: cover;
+        -webkit-background-size: cover;
+        background-size: cover;
+    }
+    
+
+    
+</style>
+
+
+
+
+
+
+
+</html>
