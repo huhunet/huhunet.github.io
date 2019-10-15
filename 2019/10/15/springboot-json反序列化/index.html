@@ -2,9 +2,9 @@
 <html>
 <head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="utf-8">
-  <title>线程池 | 爱吃苹果的猫</title>
-  <meta name="keywords" content=" java ">
-  <meta name="description" content="线程池 | 爱吃苹果的猫">
+  <title>springboot json反序列化 | 爱吃苹果的猫</title>
+  <meta name="keywords" content=" springboot ">
+  <meta name="description" content="springboot json反序列化 | 爱吃苹果的猫">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="description" content="Springboot 中怎样将返回的json报文反序列化为一个对象呢？ 1、在POJO中添加json注释 12345678910111213141516@Data@JsonDeserialize (using = MyJsonDeseriablizer.class)public class User implements Serializable &amp;#123;    @JsonProperty(&quot;">
 <meta name="keywords" content="springboot">
@@ -356,9 +356,9 @@
 </aside>
 <div class="post">
     <div class="pjax">
-        <article id="post-线程池" class="article article-type-post" itemscope itemprop="blogPost">
+        <article id="post-springboot-json反序列化" class="article article-type-post" itemscope itemprop="blogPost">
     
-        <h1 class="article-title">线程池</h1>
+        <h1 class="article-title">springboot json反序列化</h1>
     
     <div class="article-meta">
         
@@ -367,19 +367,19 @@
         
         <span class="tag">
             
-            <a href="javascript:" class="color5">java</a>
+            <a href="javascript:" class="color1">springboot</a>
             
         </span>
         
     </div>
     <div class="article-meta">
         
-        创建时间:<time class="date" title='更新时间: 2019-08-22 13:33:01'>2019-08-21 11:41</time>
+        创建时间:<time class="date" title='更新时间: 2019-10-15 22:39:43'>2019-10-15 22:25</time>
         
     </div>
     <div class="article-meta">
         
-        <span>字数:135</span>
+        <span>字数:234</span>
         
         
         <span id="busuanzi_container_page_pv">
@@ -398,7 +398,7 @@
     
     <div class="toc-ref">
     
-        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么使用线程池"><span class="toc-text">为什么使用线程池</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如何使用"><span class="toc-text">如何使用</span></a></li></ol>
+        
     
 <style>
     .left-col .switch-btn,
@@ -413,18 +413,24 @@
 </div>
     <div class="article-entry" itemprop="articleBody">
       
-        <p>线程池这个东东，一直知道有，却从来没用过，因为很少涉及到线程多到需要管理的case，一般就俩线程，还管理个啥…..</p>
-<p>今天学习下。</p>
-<h3 id="为什么使用线程池"><a href="#为什么使用线程池" class="headerlink" title="为什么使用线程池"></a>为什么使用线程池</h3><ul>
-<li><p>降低资源消耗：线程不必频繁创建和销毁，CPU也无需多次进行线程切换</p>
-</li>
-<li><p>提高响应速度：任务可以快速执行，无需重新创建线程</p>
-</li>
-<li><p>实现线程的管理：对线程实现集中管理，有序监控</p>
-</li>
-</ul>
-<h3 id="如何使用"><a href="#如何使用" class="headerlink" title="如何使用"></a>如何使用</h3><p>ThreadPoolExecutor</p>
+        <p>Springboot 中怎样将返回的json报文反序列化为一个对象呢？</p>
+<p>1、在POJO中添加json注释</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@JsonDeserialize</span> (using = MyJsonDeseriablizer.class)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="meta">@JsonProperty</span>(<span class="string">"ID"</span>)</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> id;</span><br><span class="line">    <span class="meta">@JsonProperty</span>(<span class="string">"NAME"</span>)</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@JsonIgnore</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line">    <span class="meta">@JsonProperty</span>(<span class="string">"SCORE"</span>)</span><br><span class="line">    <span class="keyword">private</span> BigDecimal score;</span><br><span class="line">    <span class="meta">@JsonProperty</span>(<span class="string">"MALE"</span>)</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> isMale;</span><br><span class="line">    <span class="meta">@JsonProperty</span>(<span class="string">"RATING"</span>)</span><br><span class="line">    <span class="keyword">private</span> Rating rating;</span><br></pre></td></tr></table></figure>
 
+<p>2、实现反序列化类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public class MyJsonDeseriablizer extends JsonDeserializer&lt;User&gt; &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public User deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException &#123;</span><br><span class="line">        JsonNode node = jsonParser.getCodec().readTree(jsonParser);</span><br><span class="line">        </span><br><span class="line">        int id = node.get(&quot;ID&quot;).asInt();</span><br><span class="line">        String name = node.get(&quot;NAME&quot;).asText();</span><br><span class="line">        BigDecimal score = new BigDecimal(node.get(&quot;SCORE&quot;).asText());</span><br><span class="line">        boolean isMale = node.get(&quot;MALE&quot;).asBoolean();</span><br><span class="line">        Rating rating = Rating.valueOf(node.get(&quot;RATING&quot;).asText());</span><br><span class="line">        </span><br><span class="line">        User user = new User();</span><br><span class="line">        user.setScore(score);</span><br><span class="line">        user.setId(id);</span><br><span class="line">        user.setName(name);</span><br><span class="line">        user.setMale(isMale);</span><br><span class="line">        user.setRating(rating);</span><br><span class="line">        return user;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3、反序列化</p>
+<pre><code>JSONObject obj = new JSONObject();
+
+obj.put(&quot;ID&quot;,&quot;2&quot;);
+obj.put(&quot;NAME&quot;,&quot;OO&quot;);
+obj.put(&quot;SCORE&quot;,&quot;23.2323&quot;);
+obj.put(&quot;MALE&quot;,&quot;true&quot;);
+obj.put(&quot;RATING&quot;,&quot;A&quot;);
+
+ObjectMapper mapper = new ObjectMapper();
+User user = mapper.readValue(obj.toJSONString(),User.class);</code></pre>
       
        
     </div>
