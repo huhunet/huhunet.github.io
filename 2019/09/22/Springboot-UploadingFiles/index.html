@@ -2,9 +2,9 @@
 <html>
 <head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="utf-8">
-  <title>nio之socket | 爱吃苹果的猫</title>
-  <meta name="keywords" content=" java ">
-  <meta name="description" content="nio之socket | 爱吃苹果的猫">
+  <title>spring uploading files | 爱吃苹果的猫</title>
+  <meta name="keywords" content>
+  <meta name="description" content="spring uploading files | 爱吃苹果的猫">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="description" content="Filter是基于函数回调的，依赖于Servlet容器；而Interceptor则是基于Java反射的，属于AOP的一种实现。 在生命周期中，执行顺序为： 过滤器-拦截器-拦截器–过滤器  过滤器  1234567891011121314151617181920212223@WebFilter(urlPatterns =  &amp;#123; &amp;quot;/AddServlet&amp;quot;,&amp;quot;">
 <meta name="keywords" content="Springboot">
@@ -412,30 +412,24 @@
 </aside>
 <div class="post">
     <div class="pjax">
-        <article id="post-nio之socket" class="article article-type-post" itemscope itemprop="blogPost">
+        <article id="post-Springboot-UploadingFiles" class="article article-type-post" itemscope itemprop="blogPost">
     
-        <h1 class="article-title">nio之socket</h1>
+        <h1 class="article-title">spring uploading files</h1>
     
     <div class="article-meta">
         
         
         
-        
-        <span class="tag">
-            
-            <a href="javascript:" class="color5">java</a>
-            
-        </span>
         
     </div>
     <div class="article-meta">
         
-        创建时间:<time class="date" title='更新时间: 2019-09-10 18:24:33'>2019-09-09 11:49</time>
+        创建时间:<time class="date" title='更新时间: 2019-09-22 10:45:17'>2019-09-22 10:45</time>
         
     </div>
     <div class="article-meta">
         
-        <span>字数:1.2k</span>
+        <span>字数:0</span>
         
         
         <span id="busuanzi_container_page_pv">
@@ -469,117 +463,7 @@
 </div>
     <div class="article-entry" itemprop="articleBody">
       
-        <p>学习下SocketChannel：</p>
-<p>NIO包下主要包含2个部分：filechannel和socket，filechannel其实是blocking，真正的nio是socket。</p>
-<p>NIO 下的socket通信和BIO中的不同在于，BIO一个tcp链接需要一个线程；而NIO基于通道轮训，一个线程可以管理多个客户端的请求，管理者即selector。</p>
-<p>NIO Socket的代码如下：</p>
-<p>public class NIOServer implements Runnable{<br>    private Logger Log = Logger.getLogger(NIOServer.class.getName());<br>    private Selector selector;<br>    private ByteBuffer writeBuffer = ByteBuffer.allocate(1024);<br>    private ByteBuffer readBuffer = ByteBuffer.allocate(1024);</p>
-<pre><code>public void init() {
-    try {
-        // 1、打开服务器套接字通道
-        ServerSocketChannel socket = ServerSocketChannel.open();
-        // 2、服务器配置为非阻塞
-        socket.configureBlocking(false);
-        // 3、进行服务的绑定
-        socket.socket().bind(new InetSocketAddress(&quot;localhost&quot;, 8001));
-        // 4、通过open()方法找到Selector
-        this.selector = Selector.open();
-        // 5、注册到selector，等待连接
-        socket.register(selector, SelectionKey.OP_ACCEPT);
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-}
-
-public void handleAcceptEvent(SelectionKey key) throws IOException {
-    ServerSocketChannel server = (ServerSocketChannel) key.channel();
-    // 得到与客户端的套接字通道
-    //ServerSocketChannel的accept接收客户端的连接请求并创建SocketChannel实例，完成上述操作后，相当于完成了TCP的三次握手，TCP物理链路正式建立。
-    //将新创建的SocketChannel设置为异步非阻塞，同时也可以对其TCP参数进行设置，例如TCP接收和发送缓冲区的大小等。此处省掉
-    SocketChannel socket = server.accept();
-    socket.configureBlocking(false);
-    socket.register(selector,SelectionKey.OP_READ);
-    //将key对应Channel设置为准备接受其他请求
-    key.interestOps(SelectionKey.OP_ACCEPT);
-}
-
-public void handleReadEvent(SelectionKey key) throws IOException {
-    SocketChannel socket = (SocketChannel) key.channel();
-    //将缓冲区清空以备下次读取
-    readBuffer.clear();
-    int num = socket.read(readBuffer);
-    Log.info(&quot;receive:&quot; + new String(readBuffer.array(),0,num));
-    socket.register(this.selector,SelectionKey.OP_WRITE);
-    key.attach(&quot;I hava got what you said&quot;);
-}
-
-/**
- * 为什么要注册写事件?
- * Selector.isWriteable()方法监控的是内核的写缓冲器是否可写，所以除非内核的写缓冲区满了，
- * 否则一旦一个SocketChannel注册了写事件，每次selector都会选中这个SocketChannel,进入到isWriteable()分支中去。
- * 实际上服务器端写消息时完全可以不注册写事件，直接调用SocketChannel.write(ByteBuffer)，
- * 也能把数据写到缓冲区并发送出去。但是这种情况下selector不会选择到isWriteable()分支。
- * 在写缓冲区满的情况下处理也不灵活，需要while(ByteBuffer.hasRemain())来检查写的状态，会导致CPU空转while.
- * 更好的做法是注册写事件。注册写事件也有两种做法，一种是SocketChannel.register(selector, SelectionKey.OP_WRITE)，
- * 直接注册到SocketChannel。第二种是用SelectionKey.interestOps(SelectionKey.interestOps() | SelectionKey.OP_WRITE），
- * 用SelectionKey来注册。每个SelectionKey只会关联一个SocketChannel，相当于注册到了SocketChannel上。
- * 业务方法只需要操作Attachment，往Attachment里面写，然后在Selector.isWriteable()分支里面取出写好的Attachment，
- * 然后调用SocketChannel.Write(ByteBuffer) 方法来把数据写到Channel。
- */
-public void handleWriteEvent(SelectionKey key) throws IOException {
-    SocketChannel socket = (SocketChannel) key.channel();
-    // get content from attachment
-    String content = (String) key.attachment();
-    writeBuffer.clear();
-    // write content to socket channel
-    socket.write(ByteBuffer.wrap(content.getBytes()));
-    writeBuffer.flip();
-    socket.register(this.selector,SelectionKey.OP_READ);
-    Log.info(&quot;send:&quot; + content);
-}
-
-public void handleSocketEvent(){
-    try {
-        while(true){
-            //judge the client = = 0
-            int count = this.selector.select(1000);
-            if(count == 0){
-                continue;
-            }
-            Iterator&lt;SelectionKey&gt; it = selector.selectedKeys().iterator();
-            while(it.hasNext()) {
-                SelectionKey key = it.next();
-                if(key.isAcceptable()){
-                    this.handleAcceptEvent(key);
-                }else if(key.isReadable()){
-                    this.handleReadEvent(key);
-                }else if(key.isWritable()){
-                    this.handleWriteEvent(key);
-                }
-                it.remove();
-            }
-        }
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-}
-
-public void run(){
-    this.init();
-    this.handleSocketEvent();
-}
-
-public static void main(String[] args) throws InterruptedException {
-
-    ExecutorService server = Executors.newFixedThreadPool(2);
-    server.submit(new NIOServer());
-
-    server.submit(new NIOClient());;</code></pre><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>}</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NIOClient</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Selector selector;</span><br><span class="line">    <span class="keyword">private</span> SocketChannel socket;</span><br><span class="line">    <span class="keyword">private</span> ByteBuffer writeBuffer = ByteBuffer.allocate(<span class="number">1024</span>);</span><br><span class="line">    <span class="keyword">private</span> ByteBuffer readBuffer = ByteBuffer.allocate(<span class="number">1024</span>);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="comment">//1、打开socket通道</span></span><br><span class="line">        socket = SocketChannel.open();</span><br><span class="line">        <span class="comment">//2、设置为非阻塞</span></span><br><span class="line">        socket.configureBlocking(<span class="keyword">false</span>);</span><br><span class="line">        <span class="comment">//3、连接服务器地址和端口</span></span><br><span class="line">        socket.connect(<span class="keyword">new</span> InetSocketAddress(<span class="string">"localhost"</span>,<span class="number">8001</span>));</span><br><span class="line">        <span class="comment">//4、通过open()方法找到Selector</span></span><br><span class="line">        <span class="keyword">this</span>.selector = Selector.open();</span><br><span class="line">        <span class="comment">//5、注册连接服务器socket的动作</span></span><br><span class="line">        socket.register(<span class="keyword">this</span>.selector, SelectionKey.OP_CONNECT);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleConnectEvent</span><span class="params">(SelectionKey key)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        socket.finishConnect();</span><br><span class="line">        socket.register(selector, SelectionKey.OP_WRITE);</span><br><span class="line">        System.out.println(<span class="string">"server connected..."</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleReadEvent</span><span class="params">(SelectionKey key)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        SocketChannel client = (SocketChannel) key.channel();</span><br><span class="line">        <span class="comment">//将缓冲区清空以备下次读取</span></span><br><span class="line">        readBuffer.clear();</span><br><span class="line">        <span class="keyword">int</span> num = client.read(readBuffer);</span><br><span class="line">        System.out.println(<span class="keyword">new</span> String(readBuffer.array(), <span class="number">0</span>, num));</span><br><span class="line">        <span class="comment">//注册读操作，下一次读取</span></span><br><span class="line">        socket.register(selector, SelectionKey.OP_WRITE);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleWriteEvent</span><span class="params">(SelectionKey key,Object message)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        writeBuffer.clear();</span><br><span class="line">        writeBuffer.put(message.toString().getBytes());</span><br><span class="line">        <span class="comment">//将缓冲区各标志复位,因为向里面put了数据标志被改变要想从中读取数据发向服务器,就要复位</span></span><br><span class="line">        writeBuffer.flip();</span><br><span class="line">        socket.write(writeBuffer);</span><br><span class="line">        socket.register(selector, SelectionKey.OP_READ);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleSocketEvent</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                <span class="comment">//选择一组键，其相应的通道已为 I/O 操作准备就绪。</span></span><br><span class="line">                <span class="comment">//此方法执行处于阻塞模式的选择操作。</span></span><br><span class="line">                <span class="keyword">this</span>.selector.select();</span><br><span class="line">                <span class="comment">//返回此选择器的已选择键集。</span></span><br><span class="line">                Set&lt;SelectionKey&gt; keys = selector.selectedKeys();</span><br><span class="line">                Iterator&lt;SelectionKey&gt; keyIterator = keys.iterator();</span><br><span class="line">                <span class="keyword">while</span> (keyIterator.hasNext()) &#123;</span><br><span class="line">                    SelectionKey key = keyIterator.next();</span><br><span class="line">                    keyIterator.remove();</span><br><span class="line">                    <span class="comment">// 判断此通道上是否正在进行连接操作。</span></span><br><span class="line">                    <span class="keyword">if</span> (key.isConnectable()) &#123;</span><br><span class="line">                        <span class="keyword">this</span>.handleConnectEvent(key);</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (key.isWritable()) &#123; <span class="comment">//写数据</span></span><br><span class="line">                        <span class="keyword">this</span>.handleWriteEvent(key, <span class="string">"I want to send somingthing"</span>);</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (key.isReadable()) &#123;<span class="comment">//读取数据</span></span><br><span class="line">                        <span class="keyword">this</span>.handleReadEvent(key);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">this</span>.init();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">this</span>.handleSocketEvent();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
+        
       
        
     </div>

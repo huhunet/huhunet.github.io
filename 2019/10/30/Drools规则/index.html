@@ -2,9 +2,9 @@
 <html>
 <head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="utf-8">
-  <title>nio之socket | 爱吃苹果的猫</title>
-  <meta name="keywords" content=" java ">
-  <meta name="description" content="nio之socket | 爱吃苹果的猫">
+  <title>Drools规则 | 爱吃苹果的猫</title>
+  <meta name="keywords" content>
+  <meta name="description" content="Drools规则 | 爱吃苹果的猫">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <meta name="description" content="Filter是基于函数回调的，依赖于Servlet容器；而Interceptor则是基于Java反射的，属于AOP的一种实现。 在生命周期中，执行顺序为： 过滤器-拦截器-拦截器–过滤器  过滤器  1234567891011121314151617181920212223@WebFilter(urlPatterns =  &amp;#123; &amp;quot;/AddServlet&amp;quot;,&amp;quot;">
 <meta name="keywords" content="Springboot">
@@ -412,30 +412,24 @@
 </aside>
 <div class="post">
     <div class="pjax">
-        <article id="post-nio之socket" class="article article-type-post" itemscope itemprop="blogPost">
+        <article id="post-Drools规则" class="article article-type-post" itemscope itemprop="blogPost">
     
-        <h1 class="article-title">nio之socket</h1>
+        <h1 class="article-title">Drools规则</h1>
     
     <div class="article-meta">
         
         
         
-        
-        <span class="tag">
-            
-            <a href="javascript:" class="color5">java</a>
-            
-        </span>
         
     </div>
     <div class="article-meta">
         
-        创建时间:<time class="date" title='更新时间: 2019-09-10 18:24:33'>2019-09-09 11:49</time>
+        创建时间:<time class="date" title='更新时间: 2019-10-30 23:08:55'>2019-10-30 22:36</time>
         
     </div>
     <div class="article-meta">
         
-        <span>字数:1.2k</span>
+        <span>字数:705</span>
         
         
         <span id="busuanzi_container_page_pv">
@@ -469,116 +463,57 @@
 </div>
     <div class="article-entry" itemprop="articleBody">
       
-        <p>学习下SocketChannel：</p>
-<p>NIO包下主要包含2个部分：filechannel和socket，filechannel其实是blocking，真正的nio是socket。</p>
-<p>NIO 下的socket通信和BIO中的不同在于，BIO一个tcp链接需要一个线程；而NIO基于通道轮训，一个线程可以管理多个客户端的请求，管理者即selector。</p>
-<p>NIO Socket的代码如下：</p>
-<p>public class NIOServer implements Runnable{<br>    private Logger Log = Logger.getLogger(NIOServer.class.getName());<br>    private Selector selector;<br>    private ByteBuffer writeBuffer = ByteBuffer.allocate(1024);<br>    private ByteBuffer readBuffer = ByteBuffer.allocate(1024);</p>
-<pre><code>public void init() {
-    try {
-        // 1、打开服务器套接字通道
-        ServerSocketChannel socket = ServerSocketChannel.open();
-        // 2、服务器配置为非阻塞
-        socket.configureBlocking(false);
-        // 3、进行服务的绑定
-        socket.socket().bind(new InetSocketAddress(&quot;localhost&quot;, 8001));
-        // 4、通过open()方法找到Selector
-        this.selector = Selector.open();
-        // 5、注册到selector，等待连接
-        socket.register(selector, SelectionKey.OP_ACCEPT);
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-}
+        <p>最近设计一个项目，需要：从数据库取一堆数据，作为输入，然后经过N个公式得出N个结论。</p>
+<p>最开始考虑用代码设计一组规则，用面向对象的思维，需要抽象出一个接口，然后根据不同的规则公式，实现接口。当公式面临频繁更改时，这种方式很bug，需要频繁派生不同实现类。</p>
+<p>Drools则可以解决该问题。</p>
+<ul>
+<li>drools注入到Springboot，分为读取本地drl文件和从数据库获取drools2种方式。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">@Configuration</span><br><span class="line">public class RuleEngineConfig &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    private DatabaseService databaseService;</span><br><span class="line">    @Autowired</span><br><span class="line">    private RulesConfigration rulesConfigration;</span><br><span class="line"></span><br><span class="line">    private static final String rulesPath = &quot;src/main/resources/rules/rule.drl&quot;;</span><br><span class="line">    private static final KieServices kieServices = KieServices.Factory.get();</span><br><span class="line"></span><br><span class="line">    private Resource[] getRuleFiles() throws IOException &#123;</span><br><span class="line">        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();</span><br><span class="line">        return resolver.getResources(&quot;classpath*:&quot; + rulesPath + &quot;**/*.*&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Bean</span><br><span class="line">    @ConditionalOnMissingBean(KieFileSystem.class)</span><br><span class="line">    public KieFileSystem kieFileSystem() throws IOException&#123;</span><br><span class="line">        KieFileSystem kieFileSystem = kieServices.newKieFileSystem();</span><br><span class="line">//        Resource[] resources = this.getRuleFiles();</span><br><span class="line">//        for(Resource resource:resources)&#123;</span><br><span class="line">//            String path = rulesPath + resource.getFilename();</span><br><span class="line">//            kieFileSystem.write(ResourceFactory.newClassPathResource(path,&quot;UTF-8&quot;));</span><br><span class="line">//        &#125;</span><br><span class="line">        String rules =  databaseService.getCriteria(rulesConfigration.version,rulesConfigration.company);</span><br><span class="line">;       kieFileSystem.write(rulesPath,rules);</span><br><span class="line">        return kieFileSystem;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Bean</span><br><span class="line">    @ConditionalOnMissingBean(KieContainer.class)</span><br><span class="line">    public KieContainer kieContainer() throws IOException&#123;</span><br><span class="line">        KieRepository kieRepository = kieServices.getRepository();</span><br><span class="line">        kieRepository.addKieModule(() -&gt; kieRepository.getDefaultReleaseId());</span><br><span class="line">        KieBuilder kieBuilder = kieServices.newKieBuilder(kieFileSystem());</span><br><span class="line">        kieBuilder.buildAll();</span><br><span class="line">        return kieServices.newKieContainer(kieRepository.getDefaultReleaseId());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Bean</span><br><span class="line">    @ConditionalOnMissingBean(KieSession.class)</span><br><span class="line">    public KieSession kieSession() throws IOException&#123;</span><br><span class="line">        return kieContainer().newKieSession();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Bean</span><br><span class="line">    @ConditionalOnMissingBean(KieBase.class)</span><br><span class="line">    public KieBase kieBase() throws IOException&#123;</span><br><span class="line">        return kieContainer().getKieBase();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Bean</span><br><span class="line">    @ConditionalOnMissingBean(KModuleAnnotationPostProcessor.class)</span><br><span class="line">    public static KModuleAnnotationPostProcessor kiePostProcesser()&#123;</span><br><span class="line">        return new KModuleAnnotationPostProcessor();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-public void handleAcceptEvent(SelectionKey key) throws IOException {
-    ServerSocketChannel server = (ServerSocketChannel) key.channel();
-    // 得到与客户端的套接字通道
-    //ServerSocketChannel的accept接收客户端的连接请求并创建SocketChannel实例，完成上述操作后，相当于完成了TCP的三次握手，TCP物理链路正式建立。
-    //将新创建的SocketChannel设置为异步非阻塞，同时也可以对其TCP参数进行设置，例如TCP接收和发送缓冲区的大小等。此处省掉
-    SocketChannel socket = server.accept();
-    socket.configureBlocking(false);
-    socket.register(selector,SelectionKey.OP_READ);
-    //将key对应Channel设置为准备接受其他请求
-    key.interestOps(SelectionKey.OP_ACCEPT);
-}
+<ul>
+<li>设计过滤器，对规则进行过滤，可以根据该改过滤器过滤规则，也可以手动agenda分组</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public class RulesFilter implements AgendaFilter &#123;</span><br><span class="line">    private String filterName;</span><br><span class="line"></span><br><span class="line">    public RulesFilter(String filterName)&#123;</span><br><span class="line">        this.filterName = filterName;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean accept(Match match) &#123;</span><br><span class="line">        Map metadataMap = match.getRule().getMetaData();</span><br><span class="line">        String version = metadataMap.get(&quot;version&quot;).toString();</span><br><span class="line">        return version.equals(filterName);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-public void handleReadEvent(SelectionKey key) throws IOException {
-    SocketChannel socket = (SocketChannel) key.channel();
-    //将缓冲区清空以备下次读取
-    readBuffer.clear();
-    int num = socket.read(readBuffer);
-    Log.info(&quot;receive:&quot; + new String(readBuffer.array(),0,num));
-    socket.register(this.selector,SelectionKey.OP_WRITE);
-    key.attach(&quot;I hava got what you said&quot;);
-}
+<ul>
+<li>设计fact</li>
+</ul>
+<p>fact即drools的输入。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">@Data</span><br><span class="line">@JsonDeserialize (using = MyJsonDeseriablizer.class)</span><br><span class="line">public class Company implements Serializable &#123;</span><br><span class="line">    @JsonProperty(&quot;ID&quot;)</span><br><span class="line">    private int id;</span><br><span class="line">    @JsonProperty(&quot;NAME&quot;)</span><br><span class="line">    private String name;</span><br><span class="line"></span><br><span class="line">    @JsonIgnore</span><br><span class="line">    private int age;</span><br><span class="line">    @JsonProperty(&quot;SCORE&quot;)</span><br><span class="line">    private BigDecimal score;</span><br><span class="line">    @JsonProperty(&quot;MALE&quot;)</span><br><span class="line">    private boolean isMale;</span><br><span class="line">    @JsonProperty(&quot;RATING&quot;)</span><br><span class="line">    private Rating rating;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-/**
- * 为什么要注册写事件?
- * Selector.isWriteable()方法监控的是内核的写缓冲器是否可写，所以除非内核的写缓冲区满了，
- * 否则一旦一个SocketChannel注册了写事件，每次selector都会选中这个SocketChannel,进入到isWriteable()分支中去。
- * 实际上服务器端写消息时完全可以不注册写事件，直接调用SocketChannel.write(ByteBuffer)，
- * 也能把数据写到缓冲区并发送出去。但是这种情况下selector不会选择到isWriteable()分支。
- * 在写缓冲区满的情况下处理也不灵活，需要while(ByteBuffer.hasRemain())来检查写的状态，会导致CPU空转while.
- * 更好的做法是注册写事件。注册写事件也有两种做法，一种是SocketChannel.register(selector, SelectionKey.OP_WRITE)，
- * 直接注册到SocketChannel。第二种是用SelectionKey.interestOps(SelectionKey.interestOps() | SelectionKey.OP_WRITE），
- * 用SelectionKey来注册。每个SelectionKey只会关联一个SocketChannel，相当于注册到了SocketChannel上。
- * 业务方法只需要操作Attachment，往Attachment里面写，然后在Selector.isWriteable()分支里面取出写好的Attachment，
- * 然后调用SocketChannel.Write(ByteBuffer) 方法来把数据写到Channel。
- */
-public void handleWriteEvent(SelectionKey key) throws IOException {
-    SocketChannel socket = (SocketChannel) key.channel();
-    // get content from attachment
-    String content = (String) key.attachment();
-    writeBuffer.clear();
-    // write content to socket channel
-    socket.write(ByteBuffer.wrap(content.getBytes()));
-    writeBuffer.flip();
-    socket.register(this.selector,SelectionKey.OP_READ);
-    Log.info(&quot;send:&quot; + content);
-}
+<ul>
+<li>执行规则</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kieSession.insert(company);</span><br><span class="line">int count = kieSession.fireAllRules(new RulesFilter(rulesVersion));</span><br></pre></td></tr></table></figure>
 
-public void handleSocketEvent(){
-    try {
-        while(true){
-            //judge the client = = 0
-            int count = this.selector.select(1000);
-            if(count == 0){
-                continue;
-            }
-            Iterator&lt;SelectionKey&gt; it = selector.selectedKeys().iterator();
-            while(it.hasNext()) {
-                SelectionKey key = it.next();
-                if(key.isAcceptable()){
-                    this.handleAcceptEvent(key);
-                }else if(key.isReadable()){
-                    this.handleReadEvent(key);
-                }else if(key.isWritable()){
-                    this.handleWriteEvent(key);
-                }
-                it.remove();
-            }
-        }
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-}
+<ul>
+<li>规则文件drl</li>
+</ul>
+<p>规则文件分为3部分：</p>
+<ol>
+<li>属性</li>
+</ol>
+<p>drools 有自己的属性，如sailence，值越大，执行优先级越高；lock-on-active –true 表示该条规则是否有效；no-loop—在更新fact时候，不为 true的规则会重新执行，但是LHS中必须是fact的成员变量，不能使用成员方法，否则不会触发RHS执行。</p>
+<p>另外，可以添加 metadata，使用方法 — @version (Haier-2019-V1)</p>
+<ol start="2">
+<li>LHS</li>
+</ol>
+<p>LHS 即条件部分，使用 when 语句</p>
+<p>多个条件在LHS时，隔行即可，无需使用or等字段。</p>
+<p>global 和 Java中相同，可以作为drl的全局参数使用。</p>
+<ol start="3">
+<li>RHS</li>
+</ol>
+<p>RHS 即结果部分，使用 then语句</p>
+<p>除此以外，全局变量在规则文件中的作用和java代码中的作用差不多，我们可以让它承担规则文件代码和java代码之间沟通的桥梁</p>
+<p>global funstion metadata packages</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-public void run(){
-    this.init();
-    this.handleSocketEvent();
-}
+<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-public static void main(String[] args) throws InterruptedException {
-
-    ExecutorService server = Executors.newFixedThreadPool(2);
-    server.submit(new NIOServer());
-
-    server.submit(new NIOClient());;</code></pre><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>}</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NIOClient</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Selector selector;</span><br><span class="line">    <span class="keyword">private</span> SocketChannel socket;</span><br><span class="line">    <span class="keyword">private</span> ByteBuffer writeBuffer = ByteBuffer.allocate(<span class="number">1024</span>);</span><br><span class="line">    <span class="keyword">private</span> ByteBuffer readBuffer = ByteBuffer.allocate(<span class="number">1024</span>);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="comment">//1、打开socket通道</span></span><br><span class="line">        socket = SocketChannel.open();</span><br><span class="line">        <span class="comment">//2、设置为非阻塞</span></span><br><span class="line">        socket.configureBlocking(<span class="keyword">false</span>);</span><br><span class="line">        <span class="comment">//3、连接服务器地址和端口</span></span><br><span class="line">        socket.connect(<span class="keyword">new</span> InetSocketAddress(<span class="string">"localhost"</span>,<span class="number">8001</span>));</span><br><span class="line">        <span class="comment">//4、通过open()方法找到Selector</span></span><br><span class="line">        <span class="keyword">this</span>.selector = Selector.open();</span><br><span class="line">        <span class="comment">//5、注册连接服务器socket的动作</span></span><br><span class="line">        socket.register(<span class="keyword">this</span>.selector, SelectionKey.OP_CONNECT);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleConnectEvent</span><span class="params">(SelectionKey key)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        socket.finishConnect();</span><br><span class="line">        socket.register(selector, SelectionKey.OP_WRITE);</span><br><span class="line">        System.out.println(<span class="string">"server connected..."</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleReadEvent</span><span class="params">(SelectionKey key)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        SocketChannel client = (SocketChannel) key.channel();</span><br><span class="line">        <span class="comment">//将缓冲区清空以备下次读取</span></span><br><span class="line">        readBuffer.clear();</span><br><span class="line">        <span class="keyword">int</span> num = client.read(readBuffer);</span><br><span class="line">        System.out.println(<span class="keyword">new</span> String(readBuffer.array(), <span class="number">0</span>, num));</span><br><span class="line">        <span class="comment">//注册读操作，下一次读取</span></span><br><span class="line">        socket.register(selector, SelectionKey.OP_WRITE);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleWriteEvent</span><span class="params">(SelectionKey key,Object message)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        writeBuffer.clear();</span><br><span class="line">        writeBuffer.put(message.toString().getBytes());</span><br><span class="line">        <span class="comment">//将缓冲区各标志复位,因为向里面put了数据标志被改变要想从中读取数据发向服务器,就要复位</span></span><br><span class="line">        writeBuffer.flip();</span><br><span class="line">        socket.write(writeBuffer);</span><br><span class="line">        socket.register(selector, SelectionKey.OP_READ);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleSocketEvent</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                <span class="comment">//选择一组键，其相应的通道已为 I/O 操作准备就绪。</span></span><br><span class="line">                <span class="comment">//此方法执行处于阻塞模式的选择操作。</span></span><br><span class="line">                <span class="keyword">this</span>.selector.select();</span><br><span class="line">                <span class="comment">//返回此选择器的已选择键集。</span></span><br><span class="line">                Set&lt;SelectionKey&gt; keys = selector.selectedKeys();</span><br><span class="line">                Iterator&lt;SelectionKey&gt; keyIterator = keys.iterator();</span><br><span class="line">                <span class="keyword">while</span> (keyIterator.hasNext()) &#123;</span><br><span class="line">                    SelectionKey key = keyIterator.next();</span><br><span class="line">                    keyIterator.remove();</span><br><span class="line">                    <span class="comment">// 判断此通道上是否正在进行连接操作。</span></span><br><span class="line">                    <span class="keyword">if</span> (key.isConnectable()) &#123;</span><br><span class="line">                        <span class="keyword">this</span>.handleConnectEvent(key);</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (key.isWritable()) &#123; <span class="comment">//写数据</span></span><br><span class="line">                        <span class="keyword">this</span>.handleWriteEvent(key, <span class="string">"I want to send somingthing"</span>);</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (key.isReadable()) &#123;<span class="comment">//读取数据</span></span><br><span class="line">                        <span class="keyword">this</span>.handleReadEvent(key);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">this</span>.init();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">this</span>.handleSocketEvent();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<p><img src="data:image/gif;base64,R0lGODlhAQABAPABAP///wAAACH5BAEKAAAALAAAAAABAAEAAAICRAEAOw==" alt="点击并拖拽以移动"></p>
 
       
        
